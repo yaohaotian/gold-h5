@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { reqIdeaList, reqDepartmentList } from '@/api/sys'
 
 import Navbar from '@/components/Navbar.vue'
+import IdeaBox from '@/components/IdeaBox.vue'
 
 const active = ref(0)
 
@@ -34,7 +35,6 @@ const getIdeaList = async (index: number) => {
     ...departmentList.value[index].ideaList,
     ...result.data.content,
   ]
-  console.log(departmentList.value[index])
 }
 
 const tabChange = (index: number) => {
@@ -46,7 +46,7 @@ const tabChange = (index: number) => {
   <Navbar title="浙水设计金点子" />
   <van-tabs v-model="active" animated swipeable @change="tabChange">
     <van-tab v-for="(i, index) in departmentList" :key="index" :title="i.name">
-      {{ 1 }}
+      <IdeaBox v-for="(x, inIndex) in i.ideaList" :key="inIndex" :idea="x" />
     </van-tab>
   </van-tabs>
 </template>
