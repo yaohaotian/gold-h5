@@ -9,6 +9,10 @@ import { envDir, sourceDir, manualChunks } from './scripts/build'
 import px2vw from 'postcss-px-to-viewport'
 import pkg from './package.json'
 
+// 引入vant
+import Components from 'unplugin-vue-components/vite'
+import { VantResolver } from 'unplugin-vue-components/resolvers'
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, envDir)
@@ -127,6 +131,9 @@ export default defineConfig(({ mode }) => {
        * 支持 `.vue` 文件的解析
        */
       vue(),
+      Components({
+        resolvers: [VantResolver()],
+      }),
 
       /**
        * 如果需要支持 `.tsx` 组件，请安装 `@vitejs/plugin-vue-jsx` 这个包
