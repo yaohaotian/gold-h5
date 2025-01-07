@@ -3460,7 +3460,7 @@ nth-check@^2.0.1, nth-check@^2.1.1:
   dependencies:
     boolbase "^1.0.0"
 
-object-assign@^4.1.1:
+object-assign@>=4.0.1, object-assign@^4.1.1:
   version "4.1.1"
   resolved "https://registry.npmmirror.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
   integrity sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==
@@ -3774,6 +3774,14 @@ postcss-load-config@^3.1.4:
     lilconfig "^2.0.5"
     yaml "^1.10.2"
 
+postcss-px-to-viewport@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.npmmirror.com/postcss-px-to-viewport/-/postcss-px-to-viewport-1.1.1.tgz#a25ca410b553c9892cc8b525cc710da47bf1aa55"
+  integrity sha512-2x9oGnBms+e0cYtBJOZdlwrFg/mLR4P1g2IFu7jYKvnqnH/HLhoKyareW2Q/x4sg0BgklHlP1qeWo2oCyPm8FQ==
+  dependencies:
+    object-assign ">=4.0.1"
+    postcss ">=5.0.2"
+
 postcss-safe-parser@^6.0.0:
   version "6.0.0"
   resolved "https://registry.npmmirror.com/postcss-safe-parser/-/postcss-safe-parser-6.0.0.tgz#bb4c29894171a94bc5c996b9a30317ef402adaa1"
@@ -3792,7 +3800,7 @@ postcss-selector-parser@^6.0.15, postcss-selector-parser@^6.1.0:
     cssesc "^3.0.0"
     util-deprecate "^1.0.2"
 
-postcss@^8.4.29, postcss@^8.4.38, postcss@^8.4.39, postcss@^8.4.43, postcss@^8.4.48:
+postcss@>=5.0.2, postcss@^8.4.29, postcss@^8.4.38, postcss@^8.4.39, postcss@^8.4.43, postcss@^8.4.48:
   version "8.4.49"
   resolved "https://registry.npmmirror.com/postcss/-/postcss-8.4.49.tgz#4ea479048ab059ab3ae61d082190fabfd994fe19"
   integrity sha512-OCVPnIObs4N29kxTjzLfUryOkvZEq+pf8jTF0lg8E7uETuWHA+v7j3c/xJmiqpX450191LlmZfUKkXxkTry7nA==
