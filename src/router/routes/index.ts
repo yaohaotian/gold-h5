@@ -40,6 +40,14 @@ const routes: RouteRecordRaw[] = [
       title: '我的',
     },
   },
+  {
+    path: '/approve-list/:approveType?',
+    name: 'ApproveList',
+    component: () => import('@/views/approveList/index.vue'),
+    meta: {
+      title: '审批列表',
+    },
+  },
   /**
    * 子路由示例
    */

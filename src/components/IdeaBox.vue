@@ -5,6 +5,16 @@ import { Icon } from '@iconify/vue'
 
 import NameTime from '@/components/NameTime.vue'
 import Divider from '@/components/Divider.vue'
+import catalog from '@/components/catalog.vue'
+
+enum Status {
+  APPROVING = '待审批',
+  PUBLISHED = '采纳',
+  UN_SUBMIT = '暂存',
+  REJECT = '退回',
+  PUB_APPROVING = '采纳审批',
+  PUB_CONFIRM = '采纳确认',
+}
 
 const props = defineProps<{ idea: Idea }>()
 
@@ -18,12 +28,16 @@ const goDetail = () => {
     },
   })
 }
+
+const statusToText = (approveState: keyof typeof Status) => {
+  return Status[approveState]
+}
 </script>
 
 <template>
   <div class="message-box" @click="goDetail">
     <div class="first-line">
-      <span class="catelog">{{ idea.catalog }}</span>
+      <catalog :name="idea.catalog" />
       <div class="subject">
         {{ idea.subject }}
       </div>
@@ -50,6 +64,9 @@ const goDetail = () => {
         </div>
       </div>
     </div>
+    <div :class="['ideaStatus-box', idea.approveState!.toLowerCase()]">
+      {{ statusToText(idea.approveState) }}
+    </div>
   </div>
 </template>
 
@@ -58,17 +75,13 @@ const goDetail = () => {
   margin: 15px 0;
 }
 .message-box {
-  padding: 15px;
+  position: relative;
+  padding: 20px 15px 15px 15px;
   box-shadow: 0 0 10px #ccc;
   margin-bottom: 15px;
   .first-line {
     display: flex;
     align-items: center;
-    .catelog {
-      font-size: 14px;
-      padding: 5px;
-      background-color: #bfa;
-    }
     .subject {
       font-weight: 600;
       margin-left: 10px;
@@ -77,7 +90,7 @@ const goDetail = () => {
   .detail {
     font-size: 14px;
     line-height: 1.5;
-    color: #ccc;
+    color: #8d8d8d;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -92,7 +105,7 @@ const goDetail = () => {
       margin-left: 10px;
     }
     .like-favorite {
-      color: #b8babf;
+      color: #8d8d8d;
       display: flex;
       align-items: center;
       span {
@@ -110,6 +123,27 @@ const goDetail = () => {
       aspect-ratio: 1 / 1; /* 宽高比为 1:1 */
       object-fit: cover; /* 保证图片不会变形，按比例裁剪 */
     }
+  }
+}
+.ideaStatus-box {
+  position: absolute;
+  right: 0;
+  top: 0;
+  color: white;
+  font-size: 14px;
+  padding: 3px;
+  border-bottom-left-radius: 5px;
+  &.pub_approving {
+    background-color: #ffae35;
+  }
+  &.approving {
+    background-color: #4b99bd;
+  }
+  &.un_submit {
+    background-color: #ffae35;
+  }
+  &.published {
+    background-color: #6bd054;
   }
 }
 </style>

@@ -52,6 +52,7 @@ export interface IdeaDetail {
   acceptCreateTime: string
   anonymous: boolean
   isPublic: number
+  comment?: any[]
   pics: any[]
   files: any[]
 }

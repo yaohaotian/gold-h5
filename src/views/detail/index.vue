@@ -5,22 +5,48 @@ import { Icon } from '@iconify/vue'
 
 import type { IdeaDetail } from '@/types/types'
 
-import { reqIdeaDetail, reqPraiseIdea, reqCollectIdea } from '@/api/sys'
+import {
+  reqIdeaDetail,
+  reqPraiseIdea,
+  reqCollectIdea,
+  reqIdeaCommentList,
+} from '@/api/sys'
 import { fmtTime } from '@/utils'
 
 import Navbar from '@/components/Navbar.vue'
 import NameTime from '@/components/NameTime.vue'
 import Divider from '@/components/Divider.vue'
+import catalog from '@/components/catalog.vue'
+
+const params = useRoute().params
 
 const detail = ref<IdeaDetail>()
 
-const params = useRoute().params
+const recoverShow = ref(false)
+
+const adoptShow = ref(false)
+
+const formData = ref({
+  approve: null,
+  content: '',
+  detail: '',
+  isPublic: 1,
+  message: '',
+})
+
+onMounted(() => {
+  getIdeaDetail()
+})
 const getIdeaDetail = async () => {
   const result = await reqIdeaDetail(params.id)
   detail.value = result.data
+  getIdeaCommentList()
 }
 
-const getCommentIdea = async () => {}
+const getIdeaCommentList = async () => {
+  const result = await reqIdeaCommentList(params.id)
+  detail.value!.comment = result.data
+}
 
 const like = async () => {
   const result = await reqPraiseIdea(params.id)
@@ -43,19 +69,15 @@ const collect = async () => {
     detail.value!.collectCount--
   }
 }
-
-onMounted(() => {
-  getIdeaDetail()
-  getCommentIdea()
-})
 </script>
 
 <template>
   <navbar title="详情" />
   <div class="detail">
-    <h5>
+    <h4>
+      <catalog :name="detail?.catalog" />
       <span>{{ detail?.subject }}</span>
-    </h5>
+    </h4>
     <nameTime
       class="name-time"
       :creator-avatar="detail?.creatorAvatar"
@@ -65,38 +87,37 @@ onMounted(() => {
     <p class="detail-content">
       {{ detail?.detail }}
     </p>
-  </div>
-
-  <div class="file-box">
-    <div v-for="(file, index) in detail?.files" :key="index" class="file">
-      <Icon icon="line-md:file-filled" width="24" height="24" />
-      <span>{{ JSON.parse(file.path).fileName }}</span>
+    <div class="file-box">
+      <div v-for="(file, index) in detail?.files" :key="index" class="file">
+        <Icon icon="line-md:file-filled" width="24" height="24" />
+        <span>{{ JSON.parse(file.path).fileName }}</span>
+      </div>
     </div>
-  </div>
-  <div class="img-box">
-    <div v-for="(pic, index) in detail?.pics" :key="index">
-      <img :src="pic.path" />
+    <div class="img-box">
+      <div v-for="(pic, index) in detail?.pics" :key="index">
+        <img :src="pic.path" />
+      </div>
     </div>
-  </div>
-  <Divider />
-  <div v-if="detail?.approveState === 'PUBLISHED'" class="detail-footer">
-    <div class="like-favorite">
-      <Icon
-        icon="mdi:like"
-        width="20"
-        height="20"
-        :color="detail.liked ? 'red' : '#ccc'"
-        @click="like"
-      />
-      <span>{{ detail?.likeCount }}</span>
-      <Icon
-        icon="mdi:heart"
-        width="20"
-        height="20"
-        :color="detail.collected ? 'red' : '#ccc'"
-        @click="collect"
-      />
-      <span>{{ detail?.collectCount }}</span>
+    <Divider />
+    <div v-if="detail?.approveState === 'PUBLISHED'" class="detail-footer">
+      <div class="like-favorite">
+        <Icon
+          icon="mdi:like"
+          width="20"
+          height="20"
+          :color="detail.liked ? 'red' : '#ccc'"
+          @click="like"
+        />
+        <span>{{ detail?.likeCount }}</span>
+        <Icon
+          icon="mdi:heart"
+          width="20"
+          height="20"
+          :color="detail.collected ? 'red' : '#ccc'"
+          @click="collect"
+        />
+        <span>{{ detail?.collectCount }}</span>
+      </div>
     </div>
   </div>
   <div v-if="detail?.acceptCreatorAvatar" class="recover">
@@ -113,11 +134,91 @@ onMounted(() => {
       </div>
     </div>
   </div>
+
+  <div v-for="(i, index) in detail?.comment" :key="index" class="comment">
+    <img class="avatar" :src="i?.commentUserAvatar" />
+    <div>
+      <div class="name">
+        {{ i?.commentNickName }}
+      </div>
+      <p class="content">
+        {{ i?.content }}
+      </p>
+      <div class="time">
+        {{ fmtTime(i?.commentTime) }}
+      </div>
+    </div>
+  </div>
+
+  <div class="recover-btn" style="margin: 16px">
+    <van-button round block native-type="submit" @click="recoverShow = true">
+      回复
+    </van-button>
+    <van-button
+      round
+      block
+      type="primary"
+      native-type="submit"
+      @click="adoptShow = true"
+    >
+      采纳
+    </van-button>
+  </div>
+
+  <van-dialog v-model:show="recoverShow" title="回复内容" show-cancel-button>
+    <van-form>
+      <van-cell-group inset>
+        <van-field
+          v-model="formData.content"
+          rows="3"
+          autosize
+          label="回复内容"
+          type="textarea"
+          placeholder="请输入"
+        />
+      </van-cell-group>
+    </van-form>
+  </van-dialog>
+
+  <van-dialog v-model:show="adoptShow" title="采纳意见" show-cancel-button>
+    <van-form>
+      <van-cell-group inset>
+        <van-field
+          v-model="formData.detail"
+          rows="3"
+          autosize
+          label="点子内容"
+          type="textarea"
+          placeholder="请修改点子内容"
+        />
+        <van-field
+          v-model="formData.message"
+          rows="3"
+          autosize
+          label="采纳意见"
+          type="textarea"
+          placeholder="请输入采纳意见"
+        />
+
+        <van-field name="switch" label="是否公开">
+          <template #input>
+            <van-switch v-model="formData.isPublic" />
+          </template>
+        </van-field>
+      </van-cell-group>
+    </van-form>
+  </van-dialog>
 </template>
 
 <style lang="less" scoped>
 .detail {
+  h4 {
+    padding-top: 20px;
+    margin-top: 0;
+  }
   padding: 0 20px;
+  background-color: #fff;
+  margin-bottom: 10px;
   .name-time {
     margin: 15px 0;
   }
@@ -164,9 +265,13 @@ onMounted(() => {
   }
 }
 
-.recover {
+.recover,
+.comment {
+  background-color: #fff;
+  border-left: 5px solid #1677ff;
   display: flex;
   padding: 10px;
+  margin-bottom: 10px;
   .avatar {
     width: 40px;
     height: 40px;
@@ -181,6 +286,21 @@ onMounted(() => {
   }
   .time {
     color: #ccc;
+  }
+}
+
+.recover-btn {
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  box-sizing: content-box;
+  /* position: fixed; */
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+  width: calc(100% - 40px);
+  .van-button {
+    width: 45%;
   }
 }
 </style>

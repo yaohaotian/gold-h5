@@ -68,7 +68,7 @@ const getMyIdea = async () => {
       </div>
     </div>
     <van-tabs v-model:active="active">
-      <van-tab v-for="(tab, index) in tabsList" :key="index" title="标签 1">
+      <van-tab v-for="(tab, index) in tabsList" :key="index">
         <template #title>
           <div class="tab-title">
             <div>{{ tab.ideaList.length }}</div>

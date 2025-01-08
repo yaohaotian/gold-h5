@@ -20,7 +20,7 @@ defineProps({
 
 <style lang="less" scoped>
 .name-time {
-  color: #b8babf;
+  color: #8d8d8d;
   font-size: 12px;
   display: flex;
   align-items: center;

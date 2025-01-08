@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useMessageStore = defineStore('message', {
+export const useDepartStyle = defineStore('message', {
   state: () => ({
     message: 'Hello World',
   }),
