@@ -2,11 +2,13 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from '@/App.vue'
 import router from '@/router'
+
 // 全局样式
 import 'virtual:uno.css'
 import '@/styles/var.less'
 import '@/styles/mixin.less'
 import '@/styles/global.less'
+import 'vant/es/toast/style'
 
 // 创建 Pinia 实例
 const pinia = createPinia()

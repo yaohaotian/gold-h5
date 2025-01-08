@@ -164,6 +164,7 @@ export default defineConfig(({ mode }) => {
        * @see https://github.com/antfu/unplugin-auto-import#configuration
        */
       autoImport({
+        resolvers: [VantResolver()],
         imports: ['vue', 'vue-router', 'pinia'],
         dts: 'src/types/declaration-files/auto-import.d.ts',
         eslintrc: {

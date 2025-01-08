@@ -17,11 +17,27 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: '/detail',
+    path: '/detail/:id?',
     name: 'Detail',
     component: () => import('@/views/detail/index.vue'),
     meta: {
       title: '详情',
+    },
+  },
+  {
+    path: '/add',
+    name: 'Add',
+    component: () => import('@/views/add/index.vue'),
+    meta: {
+      title: '添加',
+    },
+  },
+  {
+    path: '/my',
+    name: 'My',
+    component: () => import('@/views/my/index.vue'),
+    meta: {
+      title: '我的',
     },
   },
   /**
