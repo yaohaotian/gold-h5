@@ -5,12 +5,7 @@ import { Icon } from '@iconify/vue'
 
 import type { IdeaDetail } from '@/types/types'
 
-import {
-  reqIdeaDetail,
-  reqPraiseIdea,
-  reqCollectIdea,
-  reqIdeaCommentList,
-} from '@/api/sys'
+import { reqIdeaDetail, reqPraiseIdea, reqCollectIdea } from '@/api/sys'
 import { fmtTime } from '@/utils'
 
 import Navbar from '@/components/Navbar.vue'
@@ -18,34 +13,18 @@ import NameTime from '@/components/NameTime.vue'
 import Divider from '@/components/Divider.vue'
 import catalog from '@/components/catalog.vue'
 
+const model = defineModel()
+
 const params = useRoute().params
 
 const detail = ref<IdeaDetail>()
-
-const recoverShow = ref(false)
-
-const adoptShow = ref(false)
-
-const formData = ref({
-  approve: null,
-  content: '',
-  detail: '',
-  isPublic: 1,
-  message: '',
-})
 
 onMounted(() => {
   getIdeaDetail()
 })
 const getIdeaDetail = async () => {
   const result = await reqIdeaDetail(params.id)
-  detail.value = result.data
-  getIdeaCommentList()
-}
-
-const getIdeaCommentList = async () => {
-  const result = await reqIdeaCommentList(params.id)
-  detail.value!.comment = result.data
+  model.value = detail.value = result.data
 }
 
 const like = async () => {
@@ -69,6 +48,10 @@ const collect = async () => {
     detail.value!.collectCount--
   }
 }
+
+defineExpose({
+  detail: detail.value,
+})
 </script>
 
 <template>
@@ -120,7 +103,10 @@ const collect = async () => {
       </div>
     </div>
   </div>
-  <div v-if="detail?.acceptCreatorAvatar" class="recover">
+  <div
+    v-if="detail?.approveState === 'PUBLISHED' && detail?.acceptCreatorAvatar"
+    class="recover"
+  >
     <img class="avatar" :src="detail?.acceptCreatorAvatar" />
     <div>
       <div class="name">
@@ -134,80 +120,6 @@ const collect = async () => {
       </div>
     </div>
   </div>
-
-  <div v-for="(i, index) in detail?.comment" :key="index" class="comment">
-    <img class="avatar" :src="i?.commentUserAvatar" />
-    <div>
-      <div class="name">
-        {{ i?.commentNickName }}
-      </div>
-      <p class="content">
-        {{ i?.content }}
-      </p>
-      <div class="time">
-        {{ fmtTime(i?.commentTime) }}
-      </div>
-    </div>
-  </div>
-
-  <div class="recover-btn" style="margin: 16px">
-    <van-button round block native-type="submit" @click="recoverShow = true">
-      回复
-    </van-button>
-    <van-button
-      round
-      block
-      type="primary"
-      native-type="submit"
-      @click="adoptShow = true"
-    >
-      采纳
-    </van-button>
-  </div>
-
-  <van-dialog v-model:show="recoverShow" title="回复内容" show-cancel-button>
-    <van-form>
-      <van-cell-group inset>
-        <van-field
-          v-model="formData.content"
-          rows="3"
-          autosize
-          label="回复内容"
-          type="textarea"
-          placeholder="请输入"
-        />
-      </van-cell-group>
-    </van-form>
-  </van-dialog>
-
-  <van-dialog v-model:show="adoptShow" title="采纳意见" show-cancel-button>
-    <van-form>
-      <van-cell-group inset>
-        <van-field
-          v-model="formData.detail"
-          rows="3"
-          autosize
-          label="点子内容"
-          type="textarea"
-          placeholder="请修改点子内容"
-        />
-        <van-field
-          v-model="formData.message"
-          rows="3"
-          autosize
-          label="采纳意见"
-          type="textarea"
-          placeholder="请输入采纳意见"
-        />
-
-        <van-field name="switch" label="是否公开">
-          <template #input>
-            <van-switch v-model="formData.isPublic" />
-          </template>
-        </van-field>
-      </van-cell-group>
-    </van-form>
-  </van-dialog>
 </template>
 
 <style lang="less" scoped>

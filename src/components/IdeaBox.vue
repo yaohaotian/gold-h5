@@ -145,5 +145,11 @@ const statusToText = (approveState: keyof typeof Status) => {
   &.published {
     background-color: #6bd054;
   }
+  &.reject {
+    background-color: #ff7a5a;
+  }
+  &.pub_confirm {
+    background-color: #ffae35;
+  }
 }
 </style>

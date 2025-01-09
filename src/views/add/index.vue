@@ -51,7 +51,7 @@ const confirm = async (directSave: boolean) => {
       ...formData.value,
       submitType: directSave ? 'SUBMIT' : 'TEMP_SAVE',
     })
-    showSuccessToast('保存成功,即将回到首页')
+    showSuccessToast(`${directSave ? '提交' : '暂存'}成功,即将回到首页`)
     setTimeout(() => {
       router.push('/')
     }, 1000)

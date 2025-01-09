@@ -10,7 +10,7 @@ const routes: RouteRecordRaw[] = [
    */
   {
     path: '/',
-    name: 'home',
+    name: 'Home',
     component: () => import('@/views/home/index.vue'),
     meta: {
       title: '首页',
@@ -46,6 +46,14 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/approveList/index.vue'),
     meta: {
       title: '审批列表',
+    },
+  },
+  {
+    path: '/approve/:id?',
+    name: 'Approve',
+    component: () => import('@/views/approve/index.vue'),
+    meta: {
+      title: '审批',
     },
   },
   /**

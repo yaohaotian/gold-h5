@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { onMounted } from 'vue'
 import {
   reqApproveIdeaList,
@@ -8,6 +8,8 @@ import {
 } from '@/api/sys'
 
 import Navbar from '@/components/Navbar.vue'
+
+const router = useRouter()
 
 const route = useRoute()
 
@@ -31,7 +33,7 @@ const tabsList = reactive<any[]>([
   },
   {
     title: '采纳确认',
-    approveState: ['UN_SUBMIT'],
+    approveState: ['PUB_CONFIRM'],
     ideaList: [],
   },
   { title: '已采纳', approveState: ['PUBLISHED'], ideaList: [] },
@@ -63,7 +65,7 @@ const getApproveIdeaList = async () => {
 </script>
 
 <template>
-  <Navbar />
+  <Navbar title="我的审批" />
   <van-tabs
     v-model:active="active"
     :class="[route.params.approveType === 'approveUser' ? '' : 'no-tabs']"
@@ -76,9 +78,10 @@ const getApproveIdeaList = async () => {
         </div>
       </template>
       <IdeaBox
-        v-for="(idea, index) in tab.ideaList"
-        :key="index"
+        v-for="idea in tab.ideaList"
+        :key="idea.id"
         :idea="idea"
+        @click="router.push({ name: 'Approve', params: { id: idea.id } })"
       />
     </van-tab>
   </van-tabs>

@@ -31,7 +31,7 @@ const goApprove = (approveType: string) => {
 <template>
   <van-nav-bar :title="title">
     <template #left>
-      <span v-if="routeName === 'home'">
+      <span v-if="routeName === 'Home'">
         <Icon
           v-if="approveUser"
           icon="icon-park-twotone:seal"
@@ -64,7 +64,7 @@ const goApprove = (approveType: string) => {
     </template>
     <template #right>
       <Icon
-        v-if="routeName === 'home'"
+        v-if="routeName === 'Home'"
         icon="icon-park-outline:people"
         width="20"
         height="20"

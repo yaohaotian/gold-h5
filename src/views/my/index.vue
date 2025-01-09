@@ -42,7 +42,7 @@ const tabsList = reactive<any[]>([
 const getMyIdea = async () => {
   const result = await reqMyIdea()
   myDetail.value = result.data
-  tabsList[0].ideaList = result.data.ideas
+  tabsList[0].ideaList = result.data.ideas.reverse()
   for (const idea of result.data.ideas) {
     const tab = tabsList.find((tab) =>
       tab.approveState.includes(idea.approveState),
