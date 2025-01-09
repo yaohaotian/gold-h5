@@ -56,7 +56,7 @@ const statusToText = (approveState: keyof typeof Status) => {
           :creator-name="idea.creatorName"
           :create-time="idea.createTime"
         />
-        <div class="like-favorite">
+        <div v-if="idea.approveState === 'PUBLISHED'" class="like-favorite">
           <Icon icon="mdi:like" width="12" height="12" />
           <span>{{ idea.likeCount }}</span>
           <Icon icon="mdi:heart" width="12" height="12" />

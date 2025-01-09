@@ -6,7 +6,6 @@ import { showConfirmDialog, showToast } from 'vant'
 import { fmtTime } from '@/utils'
 
 import {
-  reqIdeaCommentList,
   replyApproveIdea,
   acceptApproveIdea,
   reqIdeaApproval,
@@ -25,6 +24,8 @@ const route = useRoute()
 
 const router = useRouter()
 
+const detailRef = ref()
+
 const recoverShow = ref(false)
 
 const adoptShow = ref(false)
@@ -41,13 +42,10 @@ const formData = ref({
 
 onMounted(async () => {
   await getDetail()
-  getIdeaCommentList()
   getIdeaApproval()
 })
 
 const detail = ref()
-
-const commentList = ref<any[]>([])
 
 const ideaApprovalList = ref<any[]>([])
 
@@ -55,11 +53,6 @@ const getDetail = () =>
   new Promise((resolve) => {
     resolve(detail.value)
   })
-
-const getIdeaCommentList = async () => {
-  const result = await reqIdeaCommentList(route.params.id)
-  commentList.value = result.data
-}
 
 const getIdeaApproval = async () => {
   const result = await reqIdeaApproval(route.params.id)
@@ -73,7 +66,7 @@ const recoverConfirm = async () => {
       content: formData.value.content,
     })
     showToast('回复成功')
-    getIdeaCommentList()
+    detailRef.value.getIdeaCommentList()
   } catch (error) {
     showToast('回复失败')
   }
@@ -126,7 +119,7 @@ const pass = () => {
     message: '通过后所有人可见，确定通过吗',
   }).then(async () => {
     const ideaId = route.params.id
-    detail.value.approveState === 'PUB_CONFIRM'
+    detail.value.approveState === 'PUB_APPROVING'
       ? await acceptMiddleApproveIdea({ ideaId, isPublic: 1 })
       : await reqApproveIdea({ ideaId, approve: 'PASS' })
     showToast('审批通过成功,即将返回首页')
@@ -152,24 +145,7 @@ const opinionToText = (opinion: keyof typeof Opinion) => {
 </script>
 
 <template>
-  <Detail v-model="detail" />
-  <div class="comment-box">
-    <div v-for="(i, index) in commentList" :key="index" class="comment">
-      <img class="avatar" :src="i?.commentUserAvatar" />
-      <div>
-        <div class="name">
-          {{ i?.commentNickName }}
-        </div>
-        <p class="content">
-          {{ i?.content }}
-        </p>
-        <div class="time">
-          {{ fmtTime(i?.commentTime) }}
-        </div>
-      </div>
-    </div>
-  </div>
-
+  <Detail ref="detailRef" v-model="detail" />
   <van-steps direction="vertical" :active="ideaApprovalList.length - 1">
     <van-step v-for="(a, index) in ideaApprovalList" :key="index">
       <div class="content-box">

@@ -5,7 +5,12 @@ import { Icon } from '@iconify/vue'
 
 import type { IdeaDetail } from '@/types/types'
 
-import { reqIdeaDetail, reqPraiseIdea, reqCollectIdea } from '@/api/sys'
+import {
+  reqIdeaDetail,
+  reqPraiseIdea,
+  reqCollectIdea,
+  reqIdeaCommentList,
+} from '@/api/sys'
 import { fmtTime } from '@/utils'
 
 import Navbar from '@/components/Navbar.vue'
@@ -15,20 +20,28 @@ import catalog from '@/components/catalog.vue'
 
 const model = defineModel()
 
-const params = useRoute().params
+const route = useRoute()
 
 const detail = ref<IdeaDetail>()
+
+const commentList = ref<any[]>([])
 
 onMounted(() => {
   getIdeaDetail()
 })
 const getIdeaDetail = async () => {
-  const result = await reqIdeaDetail(params.id)
+  const result = await reqIdeaDetail(route.params.id)
   model.value = detail.value = result.data
+  getIdeaCommentList()
+}
+
+const getIdeaCommentList = async () => {
+  const result = await reqIdeaCommentList(route.params.id)
+  commentList.value = result.data
 }
 
 const like = async () => {
-  const result = await reqPraiseIdea(params.id)
+  const result = await reqPraiseIdea(route.params.id)
   if (result.data) {
     detail.value!.liked = true
     detail.value!.likeCount++
@@ -39,7 +52,7 @@ const like = async () => {
 }
 
 const collect = async () => {
-  const result = await reqCollectIdea(params.id)
+  const result = await reqCollectIdea(route.params.id)
   if (result.data) {
     detail.value!.collected = true
     detail.value!.collectCount++
@@ -50,7 +63,7 @@ const collect = async () => {
 }
 
 defineExpose({
-  detail: detail.value,
+  getIdeaCommentList,
 })
 </script>
 
@@ -117,6 +130,23 @@ defineExpose({
       </p>
       <div class="time">
         {{ fmtTime(detail?.acceptCreateTime) }}
+      </div>
+    </div>
+  </div>
+
+  <div class="comment-box">
+    <div v-for="(i, index) in commentList" :key="index" class="comment">
+      <img class="avatar" :src="i?.commentUserAvatar" />
+      <div>
+        <div class="name">
+          {{ i?.commentNickName }}
+        </div>
+        <p class="content">
+          {{ i?.content }}
+        </p>
+        <div class="time">
+          {{ fmtTime(i?.commentTime) }}
+        </div>
       </div>
     </div>
   </div>

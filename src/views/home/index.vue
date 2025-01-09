@@ -26,7 +26,7 @@ const getDepartmentList = async () => {
     ...i,
     catalog: i.name,
     page: 1,
-    size: 5,
+    size: 999,
     ideaList: [],
   }))
   getIdeaList(0)
@@ -40,6 +40,11 @@ const getIdeaList = async (index: number) => {
     ...departmentList.value[index].ideaList,
     ...result.data.content,
   ]
+  result.data.content.map((i: any) => {
+    const { catalog } = i
+    const obj = departmentList.value.find((list) => list.catalog === catalog)
+    obj && obj.ideaList.push(i)
+  })
 }
 
 const tabChange = (index: number) => {
