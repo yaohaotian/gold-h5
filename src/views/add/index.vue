@@ -3,6 +3,7 @@ import { ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 import { showSuccessToast } from 'vant'
 import { reqDepartmentList, reqAddNewIdea } from '@/api/sys'
+import * as dd from 'dingtalk-jsapi'
 
 import Navbar from '@/components/Navbar.vue'
 
@@ -29,8 +30,22 @@ const showPicker = ref(false)
 const departmentList = ref<any[]>([])
 
 onMounted(() => {
+  getLocation()
   getDepartmentList()
 })
+
+const getLocation = () => {
+  dd.getLocation({
+    success: (res: any) => {
+      formData.value.longitude = res.longitude
+      formData.value.latitude = res.latitude
+      formData.value.location = `${res.longitude},${res.latitude}`
+    },
+    fail() {
+      console.log('获取位置失败')
+    },
+  } as any)
+}
 
 const getDepartmentList = async () => {
   const result = await reqDepartmentList()
@@ -45,6 +60,20 @@ const onConfirm = ({ selectedOptions }: any) => {
   showPicker.value = false
 }
 
+// 返回 Promise
+// const asyncBeforeRead = (file) =>
+//   new Promise((resolve, reject) => {
+//     if (file.type !== 'image/jpeg') {
+//       showToast('请上传 jpg 格式图片')
+//       reject()
+//     } else {
+//       const img = new File(['foo'], 'bar.jpg', {
+//         type: 'image/jpeg',
+//       })
+//       resolve(img)
+//     }
+//   })
+
 const confirm = async (directSave: boolean) => {
   try {
     await reqAddNewIdea({
@@ -54,7 +83,7 @@ const confirm = async (directSave: boolean) => {
     showSuccessToast(`${directSave ? '提交' : '暂存'}成功,即将回到首页`)
     setTimeout(() => {
       router.push('/')
-    }, 1000)
+    }, 500)
   } catch (error) {}
 }
 

@@ -1,6 +1,6 @@
 // import { getToken } from './auth'
 import axios from 'axios'
-// import storage from '@/utils/store'
+import { requestLogin } from '@/utils/auth'
 
 // 配置 Axios
 const instance = axios.create({
@@ -32,6 +32,23 @@ instance.interceptors.response.use(
     return response
   },
   (error) => {
+    if (error.status === 401) {
+      return requestLogin()
+        .then(() => {
+          // 刷新 token 后重新发起原请求
+          error.config.headers['Authorization'] =
+            `Bearer ${localStorage.getItem('IdeaToken')}`
+          // 重新发送请求并返回响应
+          return axios(error.config).then((res) => {
+            return res // 返回重新发起的请求结果
+          })
+        })
+        .catch((loginError) => {
+          // 处理登录失败的情况，例如跳转到登录页面
+          console.error('Login failed:', loginError)
+          return Promise.reject(loginError)
+        })
+    }
     return Promise.reject(error)
   },
 )
