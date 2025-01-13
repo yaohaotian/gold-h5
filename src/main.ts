@@ -2,8 +2,9 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from '@/App.vue'
 import router from '@/router'
+import { ImagePreview } from 'vant'
 
-import vconsole from 'vconsole'
+// import vconsole from 'vconsole'
 
 // 全局样式
 import 'virtual:uno.css'
@@ -15,7 +16,7 @@ import 'vant/es/toast/style'
 // 创建 Pinia 实例
 const pinia = createPinia()
 
-new vconsole()
+// new vconsole()
 
 /**
  * Pinia 支持功能扩展，例如本地持久化功能
@@ -29,6 +30,7 @@ new vconsole()
 // pinia.use(piniaPluginPersistedstate)
 
 createApp(App)
+  .use(ImagePreview)
   .use(pinia) // 启用 Pinia
   .use(router)
   .mount('#app')

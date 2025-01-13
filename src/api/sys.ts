@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import * as dd from 'dingtalk-jsapi'
 /**
  * 用户登录
  *
@@ -8,45 +9,9 @@ export const loginApi = (code: string) => {
   return request.post('/auth/login', { code })
 }
 
-/**
- * 上传文件
- */
-// export const uploadApi = (filePath, fileType = 'image', formData = {}) => {
-//   const token = getToken()
-//   if (!formData['fileName']) {
-//     formData['fileName'] = filePath.substring(filePath.lastIndexOf('/') + 1)
-//   }
-//   return new Promise((resolve, reject) => {
-//     dd.uploadFile({
-//       url: `${request.getBaseUrl()}/file/upload`,
-//       fileType,
-//       fileName: 'file',
-//       filePath,
-//       header: { Authorization: `Bearer ${token}` },
-//       formData,
-//       success: (res) => {
-//         if (res.statusCode !== 200) {
-//           let message = '发生错误'
-//           try {
-//             const data = JSON.parse(res.data)
-//             message = data.message
-//           } catch (err) {
-//             console.log(err)
-//           }
-//           dd.showToast({ type: 'fail', content: message })
-//         }
-//         resolve(res)
-//       },
-//       fail: (err) => {
-//         console.log('error:', err)
-//         dd.showToast({
-//           type: 'fail',
-//           content: '调用失败',
-//         })
-//         reject(err)
-//       },
-//     })
-//   })
+// 上传文件
+export const uploadFile = (data: any) =>
+  request.post('/file/upload', data, true)
 // }
 
 // 查询点子

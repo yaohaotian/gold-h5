@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
-
+import { showImagePreview } from 'vant'
 import type { IdeaDetail } from '@/types/types'
 
 import {
@@ -62,6 +62,13 @@ const collect = async () => {
   }
 }
 
+const previewImg = (index: number) => {
+  showImagePreview({
+    images: detail.value?.pics.map((i) => i.path) || [],
+    startPosition: index,
+  })
+}
+
 defineExpose({
   getIdeaCommentList,
 })
@@ -86,11 +93,15 @@ defineExpose({
     <div class="file-box">
       <div v-for="(file, index) in detail?.files" :key="index" class="file">
         <Icon icon="line-md:file-filled" width="24" height="24" />
-        <span>{{ JSON.parse(file.path).fileName }}</span>
+        <span class="file-name">{{ file.path.split('/').at(-1) }}</span>
       </div>
     </div>
     <div class="img-box">
-      <div v-for="(pic, index) in detail?.pics" :key="index">
+      <div
+        v-for="(pic, index) in detail?.pics"
+        :key="index"
+        @click="previewImg(index)"
+      >
         <img :src="pic.path" />
       </div>
     </div>
@@ -133,7 +144,6 @@ defineExpose({
       </div>
     </div>
   </div>
-
   <div class="comment-box">
     <div v-for="(i, index) in commentList" :key="index" class="comment">
       <img class="avatar" :src="i?.commentUserAvatar" />
@@ -197,13 +207,21 @@ defineExpose({
     background-color: #e9f2fe;
     padding: 5px;
     border-radius: 5px;
+    .iconify {
+      flex-shrink: 0;
+    }
+    .file-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }
 
 .img-box {
   text-align: center;
   img {
-    max-height: 300px;
+    max-height: 200px;
   }
 }
 

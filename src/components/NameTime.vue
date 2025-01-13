@@ -11,10 +11,10 @@ defineProps({
 
 <template>
   <div class="name-time">
-    <img class="avatar" :src="creatorAvatar" />
-    <span class="name">{{ creatorName }}</span>
-    <span class="line">|</span>
-    <span>{{ fmtTime(createTime) }}</span>
+    <img v-if="creatorAvatar" class="avatar" :src="creatorAvatar" />
+    <span class="name">{{ creatorName || '' }}</span>
+    <span v-if="createTime" class="line">|</span>
+    <span v-if="createTime">{{ fmtTime(createTime) }}</span>
   </div>
 </template>
 

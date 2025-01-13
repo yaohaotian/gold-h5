@@ -56,6 +56,14 @@ const routes: RouteRecordRaw[] = [
       title: '审批',
     },
   },
+  {
+    path: '/collect',
+    name: 'Collect',
+    component: () => import('@/views/collect/index.vue'),
+    meta: {
+      title: '收藏',
+    },
+  },
   /**
    * 子路由示例
    */

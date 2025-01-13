@@ -145,23 +145,25 @@ const opinionToText = (opinion: keyof typeof Opinion) => {
 </script>
 
 <template>
-  <Detail ref="detailRef" v-model="detail" />
-  <van-steps direction="vertical" :active="ideaApprovalList.length - 1">
-    <van-step v-for="(a, index) in ideaApprovalList" :key="index">
-      <div class="content-box">
-        <img class="avatar" :src="a.approveUserAvatar" />
-        <div class="box">
-          <div class="name-opinion">
-            <span class="name">{{ a.approveUser }}</span>
-            <span class="opinion">{{ opinionToText(a.approveType) }}</span>
+  <div class="approve">
+    <Detail ref="detailRef" v-model="detail" />
+    <van-steps direction="vertical" :active="ideaApprovalList.length - 1">
+      <van-step v-for="(a, index) in ideaApprovalList" :key="index">
+        <div class="content-box">
+          <img class="avatar" :src="a.approveUserAvatar" />
+          <div class="box">
+            <div class="name-opinion">
+              <span class="name">{{ a.approveUser }}</span>
+              <span class="opinion">{{ opinionToText(a.approveType) }}</span>
+            </div>
+            <div v-if="a.message" class="content">意见: {{ a.message }}</div>
+            <div>{{ fmtTime(a.approveTime) }}</div>
+            <div />
           </div>
-          <div v-if="a.message" class="content">意见: {{ a.message }}</div>
-          <div>{{ fmtTime(a.approveTime) }}</div>
-          <div />
         </div>
-      </div>
-    </van-step>
-  </van-steps>
+      </van-step>
+    </van-steps>
+  </div>
 
   <div class="recover-btn" style="margin: 16px">
     <div v-if="detail?.approveState === 'APPROVING'">
@@ -272,6 +274,9 @@ const opinionToText = (opinion: keyof typeof Opinion) => {
 </template>
 
 <style lang="less" scoped>
+.approve {
+  padding-bottom: 80px;
+}
 .recover,
 .comment {
   background-color: #fff;
@@ -331,7 +336,7 @@ const opinionToText = (opinion: keyof typeof Opinion) => {
 }
 
 .recover-btn {
-  position: fixed;
+  position: sticky;
   box-sizing: content-box;
   /* position: fixed; */
   bottom: 0;

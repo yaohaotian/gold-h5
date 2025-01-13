@@ -4,7 +4,10 @@ import { requestLogin } from '@/utils/auth'
 
 // 配置 Axios
 const instance = axios.create({
-  baseURL: 'https://station.zdwp.tech/api/zdwp-idea', // 替换为你的 API 基础 URL
+  baseURL:
+    import.meta.env.MODE === 'dev'
+      ? 'https://station.zdwp.tech/api/zdwp-idea'
+      : 'https://hh.zdwp.net/api/zdwp-idea', // 替换为你的 API 基础 URL
   timeout: 10000, // 请求超时时间
   headers: {
     'Content-Type': 'application/json',
@@ -59,7 +62,18 @@ export const get = (url, params = {}) => {
 }
 
 // 封装 POST 请求
-export const post = (url, data = {}) => {
+export const post = (url, data = {}, ifFormData = false) => {
+  if (ifFormData) {
+    const formData = new FormData()
+    for (const k in data) {
+      formData.append(k, data[k])
+    }
+    return instance.post(url, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  }
   return instance.post(url, data)
 }
 

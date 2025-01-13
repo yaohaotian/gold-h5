@@ -26,6 +26,9 @@ const goMy = () => {
 const goApprove = (approveType: string) => {
   router.push({ name: 'ApproveList', params: { approveType } })
 }
+const goCollect = () => {
+  router.push({ name: 'Collect' })
+}
 </script>
 
 <template>
@@ -69,6 +72,13 @@ const goApprove = (approveType: string) => {
         width="20"
         height="20"
         @click="goMy"
+      />
+      <Icon
+        v-if="routeName === 'My'"
+        icon="mdi:heart"
+        width="20"
+        height="20"
+        @click="goCollect"
       />
     </template>
   </van-nav-bar>

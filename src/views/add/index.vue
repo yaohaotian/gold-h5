@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { ref, toRefs } from 'vue'
+import { ref, toRefs, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { showSuccessToast } from 'vant'
-import { reqDepartmentList, reqAddNewIdea } from '@/api/sys'
+import { Icon } from '@iconify/vue'
+import { reqDepartmentList, reqAddNewIdea, uploadFile } from '@/api/sys'
 import * as dd from 'dingtalk-jsapi'
 
 import Navbar from '@/components/Navbar.vue'
@@ -60,24 +61,25 @@ const onConfirm = ({ selectedOptions }: any) => {
   showPicker.value = false
 }
 
-// 返回 Promise
-// const asyncBeforeRead = (file) =>
-//   new Promise((resolve, reject) => {
-//     if (file.type !== 'image/jpeg') {
-//       showToast('请上传 jpg 格式图片')
-//       reject()
-//     } else {
-//       const img = new File(['foo'], 'bar.jpg', {
-//         type: 'image/jpeg',
-//       })
-//       resolve(img)
-//     }
-//   })
+const asyncBeforeRead = (file: File): Promise<File> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { name: fileName } = file
+      const res = await uploadFile({ file, fileName })
+      file.message = res.data
+      resolve(file)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
 
 const confirm = async (directSave: boolean) => {
   try {
     await reqAddNewIdea({
       ...formData.value,
+      pics: pics.value.map((i: any) => i.file.message),
+      files: files.value.map((i: any) => i.file.message),
       submitType: directSave ? 'SUBMIT' : 'TEMP_SAVE',
     })
     showSuccessToast(`${directSave ? '提交' : '暂存'}成功,即将回到首页`)
@@ -125,7 +127,7 @@ const onFailed = (errorInfo: any) => {
       />
       <van-field name="pics" label="图片">
         <template #input>
-          <van-uploader v-model="pics" />
+          <van-uploader v-model="pics" :before-read="asyncBeforeRead" />
         </template>
       </van-field>
       <van-field name="anonymous" label="匿名发布">
@@ -135,9 +137,26 @@ const onFailed = (errorInfo: any) => {
       </van-field>
       <van-field name="files" label="附件">
         <template #input>
-          <van-uploader v-model="files">
+          <van-uploader
+            v-model="files"
+            :preview-image="false"
+            :before-read="asyncBeforeRead"
+          >
             <van-button icon="plus" type="primary"> 上传文件 </van-button>
           </van-uploader>
+          <div
+            v-for="(file, index) in files"
+            :key="index"
+            class="upload-file-box"
+          >
+            <span class="file-name">{{ file.file.name }}</span>
+            <Icon
+              icon="carbon:close-outline"
+              width="24"
+              height="24"
+              @click="files.splice(index, 1)"
+            />
+          </div>
         </template>
       </van-field>
       <!-- 通过 validator 进行异步函数校验 -->
@@ -178,6 +197,28 @@ const onFailed = (errorInfo: any) => {
   width: calc(100% - 40px);
   .van-button {
     width: 45%;
+  }
+}
+:deep(.van-field__control) {
+  display: block;
+  .upload-file-box {
+    display: flex;
+    max-width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 5px;
+    color: #22a7f2;
+    border-radius: 5px;
+    border: 2px solid #22a7f2;
+    font-weight: bold;
+    margin: 5px 0;
+    .file-name {
+      width: 150px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }
 </style>

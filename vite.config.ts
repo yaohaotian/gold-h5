@@ -37,13 +37,14 @@ export default defineConfig(({ mode }) => {
      */
     server: {
       port: 3000,
-      // proxy: {
-      //   '/devapi': {
-      //     target: 'http://192.168.10.198',
-      //     changeOrigin: true,
-      //     rewrite: (path) => path.replace(/^\/devapi/, ''),
-      //   },
-      // },
+      proxy: {
+        'Access-Control-Allow-Origin': '*',
+        '/devapi': {
+          target: 'http://192.168.10.198',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/devapi/, ''),
+        },
+      },
     },
 
     build: {
