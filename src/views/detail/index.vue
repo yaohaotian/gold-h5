@@ -93,7 +93,7 @@ defineExpose({
     <div class="file-box">
       <div v-for="(file, index) in detail?.files" :key="index" class="file">
         <Icon icon="line-md:file-filled" width="24" height="24" />
-        <span class="file-name">{{ file.path.split('/').at(-1) }}</span>
+        <!-- <span class="file-name">{{ file.path?.split('/').at(-1) }}</span> -->
       </div>
     </div>
     <div class="img-box">

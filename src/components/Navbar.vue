@@ -23,6 +23,10 @@ const goMy = () => {
   router.push({ name: 'My' })
 }
 
+const goHome = () => {
+  router.push({ name: 'Home' })
+}
+
 const goApprove = (approveType: string) => {
   router.push({ name: 'ApproveList', params: { approveType } })
 }
@@ -59,10 +63,18 @@ const goCollect = () => {
       </span>
       <Icon
         v-else
+        class="back"
         icon="simple-line-icons:arrow-left"
         width="24"
         height="24"
         @click="router.back"
+      />
+      <Icon
+        v-if="routeName !== 'Home'"
+        icon="fa6-solid:house"
+        width="24"
+        height="24"
+        @click="goHome"
       />
     </template>
     <template #right>
@@ -84,4 +96,8 @@ const goCollect = () => {
   </van-nav-bar>
 </template>
 
-<style scoped></style>
+<style scoped>
+.back {
+  margin-right: 15px;
+}
+</style>

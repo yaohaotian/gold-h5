@@ -1,16 +1,23 @@
 <script lang="ts" setup>
-import { ref, toRefs, nextTick } from 'vue'
+import { ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 import { showSuccessToast } from 'vant'
 import { Icon } from '@iconify/vue'
-import { reqDepartmentList, reqAddNewIdea, uploadFile } from '@/api/sys'
+import {
+  reqDepartmentList,
+  reqAddNewIdea,
+  uploadFile,
+  reqDingCustomSpaceId,
+} from '@/api/sys'
 import * as dd from 'dingtalk-jsapi'
 
 import Navbar from '@/components/Navbar.vue'
 
 const router = useRouter()
 
-const formData = ref({
+const spaceId = ref('')
+
+const formData = ref<any>({
   subject: '',
   catalog: '',
   detail: '',
@@ -33,6 +40,7 @@ const departmentList = ref<any[]>([])
 onMounted(() => {
   getLocation()
   getDepartmentList()
+  getDingCustomSpaceId()
 })
 
 const getLocation = () => {
@@ -48,6 +56,11 @@ const getLocation = () => {
   } as any)
 }
 
+const getDingCustomSpaceId = async () => {
+  const result = await reqDingCustomSpaceId()
+  spaceId.value = result.data
+}
+
 const getDepartmentList = async () => {
   const result = await reqDepartmentList()
   departmentList.value = result.data.map((i: any) => ({
@@ -61,12 +74,37 @@ const onConfirm = ({ selectedOptions }: any) => {
   showPicker.value = false
 }
 
-const asyncBeforeRead = (file: File): Promise<File> => {
+const asyncBeforeRead: any = (file: File): Promise<File> => {
   return new Promise(async (resolve, reject) => {
     try {
       const { name: fileName } = file
       const res = await uploadFile({ file, fileName })
       file.message = res.data
+      resolve(file)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+const beforeFileUpload = (file: File) => {
+  return new Promise((resolve, reject) => {
+    try {
+      dd.biz.util.uploadAttachment({
+        image: {
+          multiple: true,
+          compress: false,
+          max: 9,
+          spaceId: spaceId.value,
+        },
+        space: { spaceId: spaceId.value, isCopy: 1, max: 9 },
+        file: { spaceId: spaceId.value, max: 9 },
+        types: ['photo', 'camera', 'file', 'space'], //PC端支持["photo","file","space"]
+        onSuccess: function (result) {
+          console.log(result)
+        },
+        onFail: function (err) {},
+      })
       resolve(file)
     } catch (error) {
       reject(error)
@@ -140,7 +178,7 @@ const onFailed = (errorInfo: any) => {
           <van-uploader
             v-model="files"
             :preview-image="false"
-            :before-read="asyncBeforeRead"
+            :before-read="beforeFileUpload"
           >
             <van-button icon="plus" type="primary"> 上传文件 </van-button>
           </van-uploader>
